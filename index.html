@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <title>Kalkulator | Digitalent Kominfo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            outline: 0 transparent;
+            user-select: none;
+        }
+
+        @font-face {
+        font-family: 'digital';
+        src: url('digital-7.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+        } 
+
+        .wrapper {
+            margin-top: 100px;
+        }
+        .calculator {
+            width: 170px;
+            margin: 0 auto;
+            border: 5px solid gray;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+        #lcd {
+            font-family: digital;
+            border: 3px inset gray;
+            padding: 5px;
+            margin: 2px;
+            text-align: right;
+            font-weight: bold;
+            font-size: 50px;
+            overflow: hidden;
+        }
+        .tombol, .ce {
+            height: 20px;
+            width: 20px;
+            border: 1px solid gray;
+            text-align: center;
+            margin: 5px;
+            padding: 5px;
+            float: left;
+            line-height: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px gray;
+        }
+
+        .tombol:active, .ce:active {
+            position: relative;
+            top: 4px;
+            box-shadow: none;
+        }
+        #t0, #del, #ce, #result{
+            width: 40px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="calculator">
+            <div id="lcd">0</div>
+            <a class="ce" tabindex="1" id="ce">AC</a>
+            <div class="ce" style="float: right" id="del">DEL</div>
+            
+            <div style="clear: left"></div>
+            <div class="tombol" id="t1">1</div>
+            <div class="tombol" id="t2">2</div>
+            <div class="tombol" id="t3">3</div>
+            <div class="tombol operator" id="tt">+</div>
+            <div style="clear: left"></div>
+            <div class="tombol" id="t4">4</div>
+            <div class="tombol" id="t5">5</div>
+            <div class="tombol" id="t6">6</div>
+            <div class="tombol operator" id="tk">-</div>
+            <div style="clear: left"></div>
+            <div class="tombol" id="t7">7</div>
+            <div class="tombol" id="t8">8</div>
+            <div class="tombol" id="t9">9</div>
+            <div class="tombol operator" id="tk">*</div>
+            <div style="clear: left"></div>
+            <div class="tombol" id="t0">0</div>
+            <div class="ce" id="result">=</div>
+            <div class="tombol operator" id="tb">/</div>
+            <div style="clear: left"></div>
+        </div>
+    </div>
+
+    <script>
+
+        // by Iman Nurjaman
+        // www.imanancin.com
+                
+        const $ = (id) => {
+            return document.getElementById(id);
+        }
+
+        const cn = (id) => {
+            return document.getElementsByClassName(id);
+        }
+
+        let opr = ["+", "-", "/", "*"];
+        let resetLcd = false;
+    
+        let t = cn("tombol");
+        let lcd = $("lcd");
+
+        let cek = function () {
+            let a = false;
+            opr.forEach((o) => {
+            if(lcd.textContent.indexOf(o) !== -1)
+            a = true;
+            });
+
+            return a;
+        }
+
+        let ce = $("ce").addEventListener("click", function(){
+            lcd.textContent = "0";
+        });
+        
+        // menanngani saat tombol delete diklik 
+        $("del").addEventListener("click", function () {
+                let a = lcd.textContent;
+                if(a.length === 1)
+                lcd.textContent = "0";
+                else
+                lcd.textContent = a.substr(0, a.length - 1);
+                prevopt = false;
+            });
+
+         // apabila tombol (=) diklik maka jumlahkan hasil dan reset lcd 
+            $("result").addEventListener("click", function () {
+                let a = lcd.textContent;
+                try {
+                lcd.textContent = eval(a);
+                } catch (e) {
+                    if (e instanceof SyntaxError) {
+                       // alert("ada kesalahan!!");
+                       lcd.textContent = "Error!!";
+                    }
+                }
+                resetLcd = true;
+            });
+
+        
+       
+
+            // urai element dari .tombol dan dengarkan event saat di klik
+        for (let element of t) {
+            element.addEventListener("click", function(e){
+                // mengatasi event bubbling
+                e.stopPropagation();
+                //reset ulang lcd apabila selesai melakukan kalkulasi
+                if(resetLcd)
+                lcd.textContent = "";
+                let content = e.target.textContent;
+
+                // mencegah klik operator lebih dari sekali
+                 if (opr.includes(content) && cek() ){
+                    //  alert("Silahkan hitung dulu");
+                  content = "";
+                }
+
+                // (lcd.textContent.indexOf('+') !== -1 || lcd.textContent.indexOf('*') !== -1 || lcd.textContent.indexOf('/') !== -1 || lcd.textContent.indexOf('-') !== -1)
+
+                // menampilakan tombol yg di klik ke lcd
+               lcd.textContent = (lcd.textContent == "0" ? "" : lcd.textContent) + content;
+
+               // jangan reset lcd sebelum menghitung
+               resetLcd = false;
+            });
+        }
+
+    </script>
+</body>
+</html>
